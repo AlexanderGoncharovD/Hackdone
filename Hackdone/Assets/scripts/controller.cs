@@ -6,41 +6,45 @@ using UnityEngine.SceneManagement;
 
 public class controller : MonoBehaviour
 {
-	public int level;
-	public float timer, timer2;
-	public string password, inputPassword, comparePassword;
-	public bool passwordIsCorrect, isHardGame, isEasyGame;
-	public Text textPassword, textLevel, textScore, textHighScore, textScoreEnd, textHighScoreEnd, leaderbordName, yourPosLeaderbord, yourNameLeaderbords, yourScoreLeaderbords;
-	public Text[] timerText, playerNameText, playerScoreText;
-	public int numInputSymbol; // индекс вводимого символа
-	public AudioSource lockS, clock;
-	public Animator anim;
-	public Transform target;
-	private GameObject line;
-	public GameObject prefLine, linesTutorial, touchTutorial;
-	public GameObject[] buttons, circleOut;
-	public Color green, red, white, lightRed;
-	public string possibleNumbers;
-	private string resetPossibleNumbers;
-	public bool isStartedGame, isStartAnimButton;
-	public GameObject levelController, scores, textLoading, errorLoading, isLevelController, soundOn, soundMute;
-	public levelController save;
-	public bool isMenu = true, isMuteSound = false;
-	public Transform butttonPlay;
-	public Dropdown difDropdown;
-	public int pointScore = 10;
-	public int attempts; // количество попытко ввода пароля
-	public bool isFirstGame = false; // если игра запущена в первый раз
+    public int level;
+    public float timer, timer2;
+    public string password, inputPassword, comparePassword;
+    public bool passwordIsCorrect, isHardGame, isEasyGame;
+    public Text textPassword, textLevel, textScore, textHighScore, textScoreEnd, textHighScoreEnd, leaderbordName, yourPosLeaderbord, yourNameLeaderbords, yourScoreLeaderbords;
+    public Text[] timerText, playerNameText, playerScoreText;
+    public int numInputSymbol; // индекс вводимого символа
+    public AudioSource lockS, clock;
+    public Animator anim;
+    public Transform target;
+    private GameObject line;
+    public GameObject prefLine, linesTutorial, touchTutorial;
+    public GameObject[] buttons, circleOut;
+    public Color green, red, white, lightRed;
+    public string possibleNumbers;
+    private string resetPossibleNumbers;
+    public bool isStartedGame, isStartAnimButton;
+    public GameObject levelController, scores, textLoading, errorLoading, isLevelController, soundOn, soundMute;
+    public levelController save;
+    public bool isMenu = true, isMuteSound = false;
+    public Transform butttonPlay;
+    public Dropdown difDropdown;
+    public int pointScore = 10;
+    public int attempts; // количество попытко ввода пароля
+    public bool isFirstGame = false; // если игра запущена в первый раз
     public GameObject menuCanvas;
     public GameObject errorUserName;
     public Sprite[] backgroundsSprites;
     public SpriteRenderer backgroundRenderer;
     public Button[] backgroundObjects;
     public GameObject[] backgroundCheckmarks;
+    public GameObject rateApp;
     public GameObject backgroundsLevel4;
     public Text gameOverText; // Ссылка на объект, которые отображает подбадривающие надписи после проигрыша
+    [TextArea]
     public string[] highScoreText; // Текст, который показывается, когда игрок побивает свой рекорд
+    [TextArea]
     public string[] normalGameOverText; // Текст, который показывается после оконччания таймера
+    [TextArea]
     public string[] loseScoreText; // Текст, который показывается, когда результат очень плохой меньше 3-х уровней
 
     private RaycastHit hit;
@@ -67,7 +71,10 @@ public class controller : MonoBehaviour
         /*PlayerPrefs.SetInt("MaxLvl", 0);
         PlayerPrefs.SetInt("BackgroundID", 0);
         PlayerPrefs.SetInt("backgroundsLevel4", 0);
-        PlayerPrefs.SetInt("backgroundsLevel8", 0);*/
+        PlayerPrefs.SetInt("backgroundsLevel8", 0);
+        PlayerPrefs.SetInt("AllNumberGame", 0);
+        PlayerPrefs.SetInt("NoRateGooglePlay", 0);
+        PlayerPrefs.SetInt("NumberNo", 0);*/
 
         backgroundRenderer.sprite = backgroundsSprites[PlayerPrefs.GetInt("BackgroundID")];
         backgroundCheckmarks[PlayerPrefs.GetInt("BackgroundID")].SetActive(true);
@@ -107,10 +114,21 @@ public class controller : MonoBehaviour
 			soundMute.SetActive (true);
 			lockS.mute = clock.mute = isLevelController.GetComponent<AudioSource>( ).mute = true;
 		}
-		if (save.isMenu)
-			anim.Play("arrow");
-		else
-			anim.Play("loadLevel");
+        if (save.isMenu)
+        {
+            anim.Play("arrow");
+            if (PlayerPrefs.GetInt("AllNumberGame") >= (PlayerPrefs.GetInt("NumberNo") + 1) * 3)
+            {
+                if (PlayerPrefs.GetInt("NoRateGooglePlay") == 0)
+                {
+                    rateApp.SetActive(true);
+                }
+            }
+        }
+        else
+        {
+            anim.Play("loadLevel");
+        }
 		startMarker = butttonPlay.position;
 		timer = save.timerPass + (isHardGame ? 1 : 0);
 		level = save.lvl;
@@ -268,7 +286,20 @@ public class controller : MonoBehaviour
 						{
 							PlayerPrefs.SetInt("HighScore", save.score);
 							isLevelController.GetComponent<leaderbords>( ).PublishScore (save.score);
+                            gameOverText.text = highScoreText[Random.Range(0, highScoreText.Length)];
 						}
+                        else
+                        {
+                            if(level <= 3)
+                            {
+                                gameOverText.text = loseScoreText[Random.Range(0, loseScoreText.Length)];
+                            }
+                            else
+                            {
+                                gameOverText.text = normalGameOverText[Random.Range(0, normalGameOverText.Length)];
+                            }
+                        }
+                        PlayerPrefs.SetInt("AllNumberGame", PlayerPrefs.GetInt("AllNumberGame") + 1);
 						textHighScoreEnd.text = "Рекорд: " + PlayerPrefs.GetInt("HighScore");
 						if (line != null)
 							Destroy (line);
@@ -767,5 +798,23 @@ public class controller : MonoBehaviour
     {
         PlayerPrefs.SetInt("ShowBackgrounds", 1);
         BackButton();
+    }
+
+    public void OpenGooglePlay()
+    {
+        PlayerPrefs.SetInt("NoRateGooglePlay", 1);
+        Application.OpenURL("https://play.google.com/store/apps/details?id=com.PenguinLab.brain.training");
+        rateApp.SetActive(false);
+    }
+
+    public void NoRateGooglePlay()
+    {
+        PlayerPrefs.SetInt("NoRateGooglePlay", 1);
+        rateApp.SetActive(false);
+    }
+    public void NoRate()
+    {
+        rateApp.SetActive(false);
+        PlayerPrefs.SetInt("NumberNo", PlayerPrefs.GetInt("NumberNo") + 1);
     }
 }
