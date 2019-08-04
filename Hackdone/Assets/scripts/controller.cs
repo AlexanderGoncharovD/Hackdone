@@ -164,14 +164,14 @@ public class controller : MonoBehaviour
         var curMaxLvl = PlayerPrefs.GetInt("MaxLvl");
         for (int i = 0; i < backgroundObjects.Length; i++)
         {
-            if (curMaxLvl >4 && curMaxLvl <= 8)
+            if (curMaxLvl > 8 && curMaxLvl <= 16)
             {
                 if (i < 6)
                 {
                     backgroundObjects[i].interactable = true;
                 }
             }
-            else if (curMaxLvl > 8)
+            else if (curMaxLvl > 16)
             {
                 backgroundObjects[i].interactable = true;
             }
@@ -265,14 +265,14 @@ public class controller : MonoBehaviour
                         if (PlayerPrefs.GetInt("MaxLvl") < level)
                         {
                             PlayerPrefs.SetInt("MaxLvl", level);
-                            if (level > 4)
+                            if (level > 8)
                             {
                                 if (PlayerPrefs.GetInt("backgroundsLevel4") == 0)
                                 {
                                     PlayerPrefs.SetInt("backgroundsLevel4", 1);
                                     backgroundsLevel4.SetActive(true);
                                 }
-                                if (level > 8)
+                                if (level > 16)
                                 {
                                     if (PlayerPrefs.GetInt("backgroundsLevel8") == 0)
                                     {
