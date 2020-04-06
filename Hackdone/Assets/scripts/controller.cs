@@ -758,7 +758,7 @@ public class controller : MonoBehaviour
 	}
 	public void ShowHighScores ( )
 	{
-		isLevelController.GetComponent<leaderbords>( ).StartCoroutine("ShowLeaderbord");
+		isLevelController.GetComponent<leaderbords>().OnShowLeaderBoard();
 	}
 
     public void ShowSelectBackground()

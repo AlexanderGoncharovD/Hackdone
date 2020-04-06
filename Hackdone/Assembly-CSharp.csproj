@@ -28,6 +28,7 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169</NoWarn>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,6 +38,7 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169</NoWarn>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <NoConfig>true</NoConfig>
@@ -280,6 +282,8 @@
     <Compile Include="Assets\scripts\ads.cs" />
     <Compile Include="Assets\scripts\button.cs" />
     <Compile Include="Assets\scripts\controller.cs" />
+    <Compile Include="Assets\scripts\debug\AppDebug.cs" />
+    <Compile Include="Assets\scripts\debug\DisplayDebug.cs" />
     <Compile Include="Assets\scripts\leaderbords.cs" />
     <Compile Include="Assets\scripts\levelController.cs" />
     <None Include="Assets\GooglePlayGames\Plugins\Android\GooglePlayGamesManifest.plugin\AndroidManifest.xml" />
