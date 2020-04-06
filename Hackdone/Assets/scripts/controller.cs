@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System;
+using Random = UnityEngine.Random;
 
 public class controller : MonoBehaviour
 {
@@ -285,11 +287,12 @@ public class controller : MonoBehaviour
 						if (save.score >= PlayerPrefs.GetInt("HighScore"))
 						{
 							PlayerPrefs.SetInt("HighScore", save.score);
-							isLevelController.GetComponent<leaderbords>( ).PublishScore (save.score);
+							throw new Exception("Нет сохранения рекорда");
                             gameOverText.text = highScoreText[Random.Range(0, highScoreText.Length)];
 						}
                         else
                         {
+
                             if(level <= 3)
                             {
                                 gameOverText.text = loseScoreText[Random.Range(0, loseScoreText.Length)];
