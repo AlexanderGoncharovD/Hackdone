@@ -160,7 +160,7 @@ public class controller : MonoBehaviour
 			difDropdown.value = PlayerPrefs.GetInt("Difficult");
 		attempts = 1;
 		textScore.text = "Очки: " + save.score;
-		textHighScore.text = "Рекорд: " + PlayerPrefs.GetInt("HighScore");
+		textHighScore.text = $"{PlayerPrefs.GetInt("HighScore")}";
 
         var curMaxLvl = PlayerPrefs.GetInt("MaxLvl");
         for (int i = 0; i < backgroundObjects.Length; i++)
@@ -302,7 +302,7 @@ public class controller : MonoBehaviour
                             }
                         }
                         PlayerPrefs.SetInt("AllNumberGame", PlayerPrefs.GetInt("AllNumberGame") + 1);
-						textHighScoreEnd.text = "Рекорд: " + PlayerPrefs.GetInt("HighScore");
+						textHighScoreEnd.text = $"{PlayerPrefs.GetInt("HighScore")}";
 						if (line != null)
 							Destroy (line);
 						timer = -1;
