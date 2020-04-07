@@ -16,9 +16,16 @@ public class leaderbords : MonoBehaviour
 
     private void Awake()
     {
-        PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder().Build();
-        PlayGamesPlatform.InitializeInstance(config);
-        PlayGamesPlatform.Activate();
+        try
+        {
+            PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder().Build();
+            PlayGamesPlatform.InitializeInstance(config);
+            PlayGamesPlatform.Activate();
+        }
+        catch(Exception ex)
+        {
+            AppDebug.Error(ex.Message);
+        }
     }
 
     public void Start()
@@ -27,35 +34,42 @@ public class leaderbords : MonoBehaviour
         ConnectionServies();
     }
 
-    void Update()
-    {
-
-    }
 
     public void SearchCamera()
     {
         camera = GameObject.FindWithTag("MainCamera").GetComponent<controller>();
     }
 
+    /// <summary>
+    ///     Подключение к Google Play Srvices
+    /// </summary>
     public void ConnectionServies()
     {
-        // авторизация на Google play servies
-        Social.localUser.Authenticate((bool success, string message) =>
+        try
         {
-            AppDebug.Info($"Loading: {success}");
-            // если подключение успешное
-            if (success)
+            Social.localUser.Authenticate((bool success, string message) =>
             {
-                userName = Social.localUser.userName;//получаем имя игрока
-                AppDebug.Info($"User name: {userName}");
-            }
-            else
-            {
-                AppDebug.Info($"Error connect: {message}");
-            }
-        });
+                AppDebug.Info($"Loading: {success}");
+                if (success)
+                {
+                    userName = Social.localUser.userName;
+                    AppDebug.Info($"User name: {userName}");
+                }
+                else
+                {
+                    AppDebug.Error(message);
+                }
+            });
+        }
+        catch(Exception ex)
+        {
+            AppDebug.Error(ex.Message);
+        }
     }
 
+    /// <summary>
+    ///     Отобразить таблицу лидеров
+    /// </summary>
     public void OnShowLeaderBoard()
     {
         try
@@ -64,7 +78,24 @@ public class leaderbords : MonoBehaviour
         }
         catch (Exception ex)
         {
-            AppDebug.Info(ex.Message);
+            AppDebug.Error(ex.Message);
         }
+    }
+
+    /// <summary>
+    ///     Опубликовать результат
+    /// </summary>
+    /// <param name="score">
+    ///     Количество очков
+    /// </param>
+    public void Publish(int score)
+    {
+        Social.ReportScore(score, LEADERBOARD, (result) =>
+        {
+            if (!result)
+            { 
+                AppDebug.Error($"Publish score({score}) fail");
+            }
+        });
     }
 }
