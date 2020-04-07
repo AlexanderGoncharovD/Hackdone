@@ -12,7 +12,7 @@ public class controller : MonoBehaviour
     public float timer, timer2;
     public string password, inputPassword, comparePassword;
     public bool passwordIsCorrect, isHardGame, isEasyGame;
-    public Text textPassword, textLevel, textScore, textHighScore, textScoreEnd, textHighScoreEnd, leaderbordName, yourPosLeaderbord, yourNameLeaderbords, yourScoreLeaderbords;
+    public Text textPassword, textLevel, textScore, textHighScore, textScoreEnd, textHighScoreEnd;
     public Text[] timerText, playerNameText, playerScoreText;
     public int numInputSymbol; // индекс вводимого символа
     public AudioSource lockS, clock;
@@ -25,7 +25,7 @@ public class controller : MonoBehaviour
     public string possibleNumbers;
     private string resetPossibleNumbers;
     public bool isStartedGame, isStartAnimButton;
-    public GameObject levelController, scores, textLoading, errorLoading, isLevelController, soundOn, soundMute;
+    public GameObject levelController, isLevelController, soundOn, soundMute;
     public levelController save;
     public bool isMenu = true, isMuteSound = false;
     public Transform butttonPlay;
@@ -34,7 +34,6 @@ public class controller : MonoBehaviour
     public int attempts; // количество попытко ввода пароля
     public bool isFirstGame = false; // если игра запущена в первый раз
     public GameObject menuCanvas;
-    public GameObject errorUserName;
     public Sprite[] backgroundsSprites;
     public SpriteRenderer backgroundRenderer;
     public Button[] backgroundObjects;
@@ -287,7 +286,7 @@ public class controller : MonoBehaviour
 						if (save.score >= PlayerPrefs.GetInt("HighScore"))
 						{
 							PlayerPrefs.SetInt("HighScore", save.score);
-							throw new Exception("Нет сохранения рекорда");
+							isLevelController.GetComponent<leaderbords>().Publish(save.score);
                             gameOverText.text = highScoreText[Random.Range(0, highScoreText.Length)];
 						}
                         else
@@ -758,7 +757,7 @@ public class controller : MonoBehaviour
 	}
 	public void ShowHighScores ( )
 	{
-		isLevelController.GetComponent<leaderbords>( ).StartCoroutine("ShowLeaderbord");
+		isLevelController.GetComponent<leaderbords>().OnShowLeaderBoard();
 	}
 
     public void ShowSelectBackground()
