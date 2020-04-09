@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
 using Random = UnityEngine.Random;
+using Assets.Debug;
 
 public class controller : MonoBehaviour
 {
@@ -188,7 +189,7 @@ public class controller : MonoBehaviour
                 backgroundObjects[i].interactable = true;
             }
 		}
-		LoadAvailableLevelsInMenu(100);
+		LoadAvailableLevelsInMenu(curMaxLvl);
 		if (PlayerPrefs.GetInt("ShowBackgrounds") == 1)
         {
             PlayerPrefs.SetInt("ShowBackgrounds", 0);
@@ -218,6 +219,15 @@ public class controller : MonoBehaviour
 			}
 			y -= 150.0f;
 		}
+	}
+
+	public void LoadLevel(int lvl)
+	{
+		save.lvl = lvl;
+		save.isMenu = false;
+		save.timerPass = 5 + 0.25f * lvl;
+		ads.showIinterstitial = true;
+		SceneManager.LoadScene(0);
 	}
 
 	void Update ( )
