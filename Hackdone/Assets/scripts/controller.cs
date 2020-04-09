@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
 using Random = UnityEngine.Random;
+using Assets.Debug;
 
 public class controller : MonoBehaviour
 {
@@ -40,6 +41,16 @@ public class controller : MonoBehaviour
     public GameObject[] backgroundCheckmarks;
     public GameObject rateApp;
     public GameObject backgroundsLevel4;
+
+	/// <summary>
+	///		Объект контента панеи Scroll View
+	/// </summary>
+	public GameObject scrollViewContent;
+
+	/// <summary>
+	///		Префаб иконки уровня для меню
+	/// </summary>
+	public GameObject levelMenuPrefab;
     public Text gameOverText; // Ссылка на объект, которые отображает подбадривающие надписи после проигрыша
     [TextArea]
     public string[] highScoreText; // Текст, который показывается, когда игрок побивает свой рекорд
@@ -66,6 +77,7 @@ public class controller : MonoBehaviour
 	private bool isRedTimer;
 	private ads ads;
 	private bool isRestart;
+	private int _maxLoadLevel;
 
     void Awake()
     {
@@ -160,7 +172,7 @@ public class controller : MonoBehaviour
 			difDropdown.value = PlayerPrefs.GetInt("Difficult");
 		attempts = 1;
 		textScore.text = "Очки: " + save.score;
-		textHighScore.text = "Рекорд: " + PlayerPrefs.GetInt("HighScore");
+		textHighScore.text = $"{PlayerPrefs.GetInt("HighScore")}";
 
         var curMaxLvl = PlayerPrefs.GetInt("MaxLvl");
         for (int i = 0; i < backgroundObjects.Length; i++)
@@ -176,12 +188,46 @@ public class controller : MonoBehaviour
             {
                 backgroundObjects[i].interactable = true;
             }
-        }
-        if(PlayerPrefs.GetInt("ShowBackgrounds") == 1)
+		}
+		LoadAvailableLevelsInMenu(curMaxLvl);
+		if (PlayerPrefs.GetInt("ShowBackgrounds") == 1)
         {
             PlayerPrefs.SetInt("ShowBackgrounds", 0);
             ShowSelectBackground();
         }
+	}
+
+	private void LoadAvailableLevelsInMenu(int levels)
+	{
+		var y = -50.0f;
+		var rows = Mathf.CeilToInt(levels / 3.0f);
+		var curGenLvl = 1;
+		scrollViewContent.GetComponent<RectTransform>().sizeDelta = new Vector2(450, rows * 150);
+		for (var row = 0; row < rows; row++)
+		{
+			for (var cell = -150; cell <= 150; cell += 150)
+			{
+				if (levels == 0)
+				{
+					return;
+				}
+				var lvl = Instantiate(levelMenuPrefab, scrollViewContent.transform);
+				lvl.transform.localPosition = new Vector3(cell, y, 0);
+				lvl.transform.GetComponentInChildren<Text>().text = $"{curGenLvl}";
+				curGenLvl++;
+				levels--;
+			}
+			y -= 150.0f;
+		}
+	}
+
+	public void LoadLevel(int lvl)
+	{
+		save.lvl = lvl;
+		save.isMenu = false;
+		save.timerPass = 5 + 0.25f * lvl;
+		ads.showIinterstitial = true;
+		SceneManager.LoadScene(0);
 	}
 
 	void Update ( )
@@ -302,7 +348,7 @@ public class controller : MonoBehaviour
                             }
                         }
                         PlayerPrefs.SetInt("AllNumberGame", PlayerPrefs.GetInt("AllNumberGame") + 1);
-						textHighScoreEnd.text = "Рекорд: " + PlayerPrefs.GetInt("HighScore");
+						textHighScoreEnd.text = $"{PlayerPrefs.GetInt("HighScore")}";
 						if (line != null)
 							Destroy (line);
 						timer = -1;
@@ -760,9 +806,13 @@ public class controller : MonoBehaviour
 		isLevelController.GetComponent<leaderbords>().OnShowLeaderBoard();
 	}
 
-    public void ShowSelectBackground()
-    {
+	public void ShowLevels()
+	{
+		anim.Play("Levels");
+	}
 
+	public void ShowSelectBackground()
+    {
         anim.Play("selectBackground");
     }
 

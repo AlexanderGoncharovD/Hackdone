@@ -282,6 +282,7 @@
     <Compile Include="Assets\scripts\debug\AppDebug.cs" />
     <Compile Include="Assets\scripts\debug\DisplayDebug.cs" />
     <Compile Include="Assets\scripts\leaderbords.cs" />
+    <Compile Include="Assets\scripts\LevelButton.cs" />
     <Compile Include="Assets\scripts\levelController.cs" />
     <None Include="Assets\GooglePlayGames\Plugins\Android\GooglePlayGamesManifest.plugin\AndroidManifest.xml" />
     <Reference Include="Unity.TextMeshPro.Editor">
