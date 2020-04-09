@@ -40,6 +40,16 @@ public class controller : MonoBehaviour
     public GameObject[] backgroundCheckmarks;
     public GameObject rateApp;
     public GameObject backgroundsLevel4;
+
+	/// <summary>
+	///		Объект контента панеи Scroll View
+	/// </summary>
+	public GameObject scrollViewContent;
+
+	/// <summary>
+	///		Префаб иконки уровня для меню
+	/// </summary>
+	public GameObject levelMenuPrefab;
     public Text gameOverText; // Ссылка на объект, которые отображает подбадривающие надписи после проигрыша
     [TextArea]
     public string[] highScoreText; // Текст, который показывается, когда игрок побивает свой рекорд
@@ -66,6 +76,7 @@ public class controller : MonoBehaviour
 	private bool isRedTimer;
 	private ads ads;
 	private bool isRestart;
+	private int _maxLoadLevel;
 
     void Awake()
     {
@@ -176,12 +187,37 @@ public class controller : MonoBehaviour
             {
                 backgroundObjects[i].interactable = true;
             }
-        }
-        if(PlayerPrefs.GetInt("ShowBackgrounds") == 1)
+		}
+		LoadAvailableLevelsInMenu(100);
+		if (PlayerPrefs.GetInt("ShowBackgrounds") == 1)
         {
             PlayerPrefs.SetInt("ShowBackgrounds", 0);
             ShowSelectBackground();
         }
+	}
+
+	private void LoadAvailableLevelsInMenu(int levels)
+	{
+		var y = -50.0f;
+		var rows = Mathf.CeilToInt(levels / 3.0f);
+		var curGenLvl = 1;
+		scrollViewContent.GetComponent<RectTransform>().sizeDelta = new Vector2(450, rows * 150);
+		for (var row = 0; row < rows; row++)
+		{
+			for (var cell = -150; cell <= 150; cell += 150)
+			{
+				if (levels == 0)
+				{
+					return;
+				}
+				var lvl = Instantiate(levelMenuPrefab, scrollViewContent.transform);
+				lvl.transform.localPosition = new Vector3(cell, y, 0);
+				lvl.transform.GetComponentInChildren<Text>().text = $"{curGenLvl}";
+				curGenLvl++;
+				levels--;
+			}
+			y -= 150.0f;
+		}
 	}
 
 	void Update ( )
@@ -760,9 +796,13 @@ public class controller : MonoBehaviour
 		isLevelController.GetComponent<leaderbords>().OnShowLeaderBoard();
 	}
 
-    public void ShowSelectBackground()
-    {
+	public void ShowLevels()
+	{
+		anim.Play("Levels");
+	}
 
+	public void ShowSelectBackground()
+    {
         anim.Play("selectBackground");
     }
 
